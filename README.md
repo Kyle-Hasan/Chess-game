@@ -1,4 +1,4 @@
-# chessGame
+# Chess game
 Basic chess game made using pygame library in python. <br />
 Note that check mate has not been added yet, must hit king to end game. <br />
 There is no enpesant pawn rule added yet either.
