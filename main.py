@@ -79,6 +79,7 @@ findImage = {
 
 
 }
+
 #method used to fill the board and set the starting positions of all the pieces
 def startUp():
     #removes any existing objects
@@ -87,7 +88,7 @@ def startUp():
 
     #creates a list of tile objects for each column in board, size of the tiles is scaled to the size of window using squareSize
     #therefore first index in board represents a column and second index represents a row
-    
+
     for i in range(int((sideLength) / squareSize)):
         board.append(list())
         for j in range(int(sideLength / squareSize)):
@@ -164,6 +165,9 @@ def unHightLightTile(movable):
 
 
 
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
@@ -176,12 +180,15 @@ if __name__ == '__main__':
     pieceToDrag = None
 
     gameOver = False
+    #if pawn promotion is happening or not
+    pawnPromotion = False
     turn = 'W'
 
     startUp()
     #represents all the positions on the board the selected piece can move to
     canMove = list()
     running = True
+
     while running:
         for event in pygame.event.get():
             #quits the game
@@ -196,7 +203,7 @@ if __name__ == '__main__':
                     ''' this checks whether or not pieces on the board can be checked by checking if the board itself can be clicked
                     and that the game is still going
                     '''
-                    if not gameOver and mouse_y < sideLength:
+                    if not gameOver and mouse_y < sideLength and not pawnPromotion:
 
                         #converts the coordinates clicked to indexes on the board
 
@@ -249,9 +256,11 @@ if __name__ == '__main__':
                             #deals with pawn promotion
                             if type(pieceToDrag) == BoardObjects.Pawn and not gameOver:
                                 y = int(pieceToDrag.y // squareSize)
+
                                 #checks whether the pawn made to the end of the board from its respective side
                                 if (turn == 'W' and y == 0) or (turn == 'B' and y == 7):
 
+                                    pawnPromotion = True
                                     #decides what to change the pawn to
                                     promotion = input(" type in the piece to promote this pawn to, use all lowercase: ")
                                     while (
@@ -266,6 +275,7 @@ if __name__ == '__main__':
                                     pieceToDrag = findObject[promotion](turn, image, tileFinal.x,
                                                                         tileFinal.y)
                                     pieceList.append(pieceToDrag)
+                                    pawnPromotion = False
                             #sets the piece of the final position as the selected piece
                             tileFinal.piece = pieceToDrag
 
@@ -300,19 +310,20 @@ if __name__ == '__main__':
                     pieceToDrag.x = mouse_x
                     pieceToDrag.y = mouse_y
 
-        #draws every tile
 
+
+
+        #draws extra space at the bottom
+        pygame.draw.rect(screen, GUREE, (0, sideLength, sideLength, padding))
+
+        #draws board and pieces on the screen
         for row in board:
             for col in row:
                 col.draw(screen, sideLength)
 
-        #draws every piece
         for piece in pieceList:
-
             screen.blit(piece.image, (piece.x, piece.y))
 
-        #draws extra space at the bottom
-        pygame.draw.rect(screen, GUREE, (0, sideLength, sideLength, padding))
 
         #if the game over, displays text displaying the winner and replay button
         if gameOver:
